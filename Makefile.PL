@@ -17,6 +17,7 @@ WriteMakefile(
 		'KiokuDB' => 0.09,
 		'Sub::Exporter' => 0,
 		'MooseX::Types::Authen::Passphrase' => 0,
+		'MooseX::Role::Parameterized' => 0.14,
 	},
 );
 
