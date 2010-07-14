@@ -1,27 +1,43 @@
 #!/usr/bin/perl
 
 package KiokuX::User::ID;
-use Moose::Role;
+use MooseX::Role::Parameterized;
 
 use namespace::clean -except => 'meta';
 
-with qw(KiokuDB::Role::ID);
-
-sub id_for_user {
-    my ( $self, $id ) = @_;
-    return "user:$id"
-}
-
-sub kiokudb_object_id {
-    my $self = shift;
-    $self->id_for_user($self->id);
-}
-
-has id => (
-    isa => "Str",
-    is  => "ro",
-    required => 1,
+parameter id_attribute => (
+    isa     => 'Str',
+    default => 'id',
 );
+
+parameter user_prefix => (
+    isa     => 'Str',
+    default => 'user:',
+);
+
+role {
+    my ($p) = @_;
+    my $id_attr = $p->id_attribute;
+    my $user_prefix = $p->user_prefix;
+
+    with qw(KiokuDB::Role::ID);
+
+    method id_for_user => sub {
+        my ( $self, $id ) = @_;
+        return $user_prefix . $id;
+    };
+
+    method kiokudb_object_id => sub {
+        my $self = shift;
+        $self->id_for_user($self->$id_attr);
+    };
+
+    has $id_attr => (
+        isa      => "Str",
+        is       => "ro",
+        required => 1,
+    );
+};
 
 __PACKAGE__
 

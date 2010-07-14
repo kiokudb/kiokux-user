@@ -1,16 +1,28 @@
 #!/usr/bin/perl
 
 package KiokuX::User;
-use Moose::Role;
+use MooseX::Role::Parameterized;
 
 use namespace::clean -except => 'meta';
 
 our $VERSION = "0.01";
 
-with qw(
-    KiokuX::User::ID
-    KiokuX::User::Password
+parameter id => (
+    isa     => 'HashRef',
+    default => sub { +{} },
 );
+
+parameter password => (
+    isa     => 'HashRef',
+    default => sub { +{} },
+);
+
+role {
+    my ($p) = @_;
+
+    with 'KiokuX::User::ID' => $p->id,
+         'KiokuX::User::Password' => $p->password;
+};
 
 __PACKAGE__
 
